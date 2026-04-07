@@ -42,20 +42,23 @@ def register(user: schemas.UserCreate, db: Session = Depends(database.get_db)):
     return auth_service.register_user(db, user)
 
 
+from fastapi import Body
+
 @router.post("/login")
 def login(
-    form_data: OAuth2PasswordRequestForm = Depends(),
+    username: str = Body(...),
+    password: str = Body(...),
     db: Session = Depends(database.get_db),
     otp_token: Optional[str] = None,
     security_answer: Optional[str] = None,
 ):
     return auth_service.authenticate_user(
         db,
-        identifier=form_data.username,
-        password=form_data.password,
+        identifier=username,
+        password=password,
         otp_token=otp_token,
         security_answer=security_answer,
-    ) 
+    )
 
 
 @router.get("/me", response_model=schemas.UserResponse)
