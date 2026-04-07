@@ -44,7 +44,9 @@ def register_user(db: Session, user: schemas.UserCreate) -> models.User:
     if user.security_question and user.security_answer:
         new_user.security_question = user.security_question.strip()
         new_user.security_answer_hash = auth.get_password_hash(normalize_security_answer(user.security_answer))
-        new_user.two_factor_enabled = True
+
+    # ✅ ONLY CHANGE: disable 2FA by default
+    new_user.two_factor_enabled = False
 
     db.add(new_user)
     db.commit()
@@ -178,7 +180,7 @@ def request_password_reset(db: Session, email: str) -> dict:
 
     try:
         send_password_reset_email(user.email, user.username, user.reset_token)
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:
         user.reset_token = None
         user.reset_token_expires_at = None
         db.commit()
@@ -233,3 +235,5 @@ def disable_security_question(db: Session, current_user: models.User, answer: st
     db.commit()
     db.refresh(user)
     return user
+   
+        
