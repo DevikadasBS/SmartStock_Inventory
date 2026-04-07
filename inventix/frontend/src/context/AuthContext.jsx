@@ -46,16 +46,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = async (username, password, securityAnswer = null, rememberMe = true) => {
-    const form = new URLSearchParams();
-    form.append('username', username.trim());
-    form.append('password', password);
-    
-    if (securityAnswer) {
-      form.append('security_answer', securityAnswer);
-    }
-    
-    // We slightly refactor to just pass the `data` depending on how authService handles it or directly use the api instance locally, but we defined `authService.login(data, headers)`
-    const res = await authService.login(form, { 'Content-Type': 'application/x-www-form-urlencoded' });
+    const res = await authService.login(username, password);
     
     if (res.data.requires_security_question) {
       return res.data;
