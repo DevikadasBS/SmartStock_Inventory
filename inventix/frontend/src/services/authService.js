@@ -1,7 +1,20 @@
 import api from './api';
 
 export const getMe = () => api.get('/auth/me');
-export const login = (data, headers) => api.post('/auth/login', data, { headers });
+
+// ✅ FIXED LOGIN (IMPORTANT)
+export const login = (email, password) => {
+  const formData = new URLSearchParams();
+  formData.append("username", email);   // backend expects "username"
+  formData.append("password", password);
+
+  return api.post('/auth/login', formData, {
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded"
+    }
+  });
+};
+
 export const register = (data) => api.post('/auth/register', data);
 export const updateProfile = (updates) => api.patch('/auth/me', updates);
 export const uploadAvatar = (formData, headers) => api.post('/auth/me/avatar', formData, { headers });
